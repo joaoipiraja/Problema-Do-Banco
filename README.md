@@ -22,6 +22,9 @@ Semaforo mutex = 1
 
 
 class Barber {
+    init{
+       fb.enqueue(self)
+    } 
     func run(){
         loop infinito{
         
