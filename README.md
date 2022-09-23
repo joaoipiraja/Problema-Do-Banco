@@ -50,6 +50,9 @@ class Customer{
  
  func run(){
  
+ 
+ loop infinito{
+ 
  down(mutex);
         if(fc.size < fb.disponiveis.size){
         
@@ -64,7 +67,7 @@ class Customer{
         }else{
           up(mutex)
         }
-    
+   }
  }
  
 }
