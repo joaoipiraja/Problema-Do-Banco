@@ -23,11 +23,11 @@ Semaforo mutex = 1
 
 class Barber {
     init{
-       fb.enqueue(self)
-    } 
+        fb.enqueue(self)
+    }
     func run(){
         loop infinito{
-        
+            
             down(customer)
             down(mutex)
             
@@ -36,41 +36,45 @@ class Barber {
             up(barber)
             up(mutex)
             
-            //espera o cliente finalizar 
+            //espera o cliente finalizar
             
             down(client.cutting)
-
+            
         }
     }
 }
 
 
 class Customer{
- semaforo cutting = 1
- 
- func run(){
- 
- 
- loop infinito{
- 
- down(mutex);
-        if(fc.size < fb.disponiveis.size){
+    semaforo cutting = 1
+    
+    func run(){
         
-            fc.enqueue(self)
-            up(customers)
-            up(mutex)
-            down(barber)
+        
+        loop infinito{
             
-            //Realiza a ação
-            up(cutting)
-            
-        }else{
-          up(mutex)
+            down(mutex);
+            if(fc.size < fb.disponiveis.size){
+                
+                fc.enqueue(self)
+                up(customers)
+                up(mutex)
+                down(barber)
+                
+                //Realiza a ação
+                up(cutting)
+                
+            }else{
+                up(mutex)
+            }
         }
-   }
- }
- 
+    }
+    
 }
+
+
+
+
 ````
 
 ### Particularidades de Swift
