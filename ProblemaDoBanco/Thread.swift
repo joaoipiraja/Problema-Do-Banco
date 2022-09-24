@@ -63,11 +63,11 @@ class ATMThread: Thread{
             atmSemaphore.signal()
             mutex.signal()
             
-            model.state = .Atendendo
+            model.state = .Attending
             atualizarView()
             
             client?.cutting.wait()
-            model.state = .Dormindo
+            model.state = .Sleeping
             atualizarView()
         }
     }
@@ -116,7 +116,7 @@ class CustomerThread:Thread{
     func run() {
         while(true){
             mutex.wait()
-            if(waitingQueues.elements.count < atmMachines.elements.filter{$0.model.state == .Dormindo}.count){
+            if(waitingQueues.elements.count < atmMachines.elements.filter{$0.model.state == .Sleeping}.count){
                 
                 waitingQueues.enqueue(self)
                 
@@ -125,7 +125,7 @@ class CustomerThread:Thread{
                 atmSemaphore.wait()
                 
                 
-                self.model.state = .SendoAtendido
+                self.model.state = .BeingAttended
                 
                 atualizarView()
                 
@@ -136,13 +136,13 @@ class CustomerThread:Thread{
                             self.model.tempoAtual =  self.model.tempoAtendimento - i
                         }
                     
-                        for _ in Range(0 ... 10000000){
-                       
-                        }
+                      sleep(1)
                    
                 }
                 
-                 self.model.state = .Atendido
+               
+                
+                 self.model.state = .Attended
                 
                 atualizarView()
                 //do things

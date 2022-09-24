@@ -9,14 +9,14 @@ import Foundation
 
 
 enum ATMState {
-    case Dormindo
-    case Atendendo
+    case Sleeping
+    case Attending
 }
 
 enum CustomerState{
-    case Dormindo
-    case SendoAtendido
-    case Atendido
+    case Sleeping
+    case BeingAttended
+    case Attended
 }
 
 class ATMModel{
@@ -35,10 +35,15 @@ class ATMModel{
     var stateDescription: String{
         get{
             switch state{
-                case .Atendendo:
-                return "Atendendo - Cliente(\(self.clienteAtual?.idString)) - \(self.clienteAtual?.tempoAtual)s"
-            case .Dormindo:
-                return "Dormindo"
+                case .Attending:
+                if let clienteAtual = clienteAtual{
+                    return "Attending - Customer(\(clienteAtual.idString)) - \(clienteAtual.tempoAtual)s"
+                }else{
+                    return "Attending - Client(NOT DEFINED) "
+                }
+               
+            case .Sleeping:
+                return "Sleeping"
             }
         }
     }
@@ -46,7 +51,7 @@ class ATMModel{
     
     init(){
         self.id = UUID()
-        self.state = .Dormindo
+        self.state = .Sleeping
         self.clienteAtual = nil
     }
 }
@@ -69,20 +74,22 @@ class CustomerModel{
         get{
             switch state{
                 
-            case .Dormindo:
-                return "Dormindo"
-            case .SendoAtendido:
-                return "Sendo Atendido - \(tempoAtual)s - \(tempoAtendimento)s"
-            case .Atendido:
-                return "Atendido"
+            case .Sleeping:
+                return "Sleeping - \(tempoAtendimento)s"
+            case .BeingAttended:
+                return "Being Attended - \(tempoAtual)s"
+            case .Attended:
+                return "Attended"
             }
         }
     }
     
     init(tempoAtendimento: Int){
         self.id  = UUID()
-        self.state = .Dormindo
+        self.state = .Sleeping
         self.tempoAtendimento = tempoAtendimento
         self.tempoAtual = 0
     }
+    
+    static var DATAFORMOCK = CustomerModel(tempoAtendimento: 10)
 }

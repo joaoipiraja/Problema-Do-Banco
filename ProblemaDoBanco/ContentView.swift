@@ -7,10 +7,13 @@
 
 import SwiftUI
 
+
 struct ContentView: View {
     
     @ObservedObject var viewData:ViewData = ViewData()
+    @State private var showingSheet: Bool = false
     
+
     
     func runThread(_ seconds: Double, completion: @escaping () -> ()) {
         DispatchQueue.global(qos:.background).asyncAfter(deadline: .now() + seconds) {
@@ -22,10 +25,10 @@ struct ContentView: View {
     
     var body: some View {
         
-        VStack{
+        List{
             Section(content: {
                 
-                List{
+                
                     
                     ForEach(self.viewData.atms, id: \.id) { atms in
                         VStack(alignment: .leading){
@@ -37,7 +40,7 @@ struct ContentView: View {
                     
                     Button {
                         
-                       
+                        
                         let model = ATMModel()
                         
                         DispatchQueue.main.async {
@@ -46,22 +49,23 @@ struct ContentView: View {
                         runThread(0.5) {
                             ATMThread(model: model, viewData: _viewData).run()
                         }
-                       
                         
+                          
+      
                     } label: {
-                        Text("Adicionar")
+                        Text("Add new one")
                     }
-                }
+                
                
                 
      
             }, header: {
-                Text("Bancos - \(self.viewData.atms.count)")
+                Text("ATM Machines - \(self.viewData.atms.count)")
             })
             
             Section(content: {
                 
-                List{
+                
                     ForEach(self.viewData.customers, id: \.id) { customers in
                         VStack(alignment: .leading){
                             Text(customers.idString)
@@ -71,34 +75,48 @@ struct ContentView: View {
                     
                     Button {
                         
-                        
-                        let model = CustomerModel(tempoAtendimento: 10)
+                        showingSheet = true
+
+                    } label: {
+                        Text("Add new one")
+                    }
+                
+                
+            }, header: {
+                Text("Customers - \(self.viewData.customers.count)")
+            })
+        }
+        .sheet(isPresented: $showingSheet) {
+            NavigationView {
+                
+                Sheet { model in
+                    if let model = model{
                         
                         DispatchQueue.main.async {
                             viewData.customers.append(model)
                         }
-                       
-                        
                         runThread(0.5) {
                             CustomerThread(model: model, viewData: _viewData).run()
                         }
-                        
-                        
-                    } label: {
-                        Text("Adicionar")
+                       
                     }
+                    showingSheet = false
                 }
-                
-            }, header: {
-                Text("Clientes - \(self.viewData.customers.count)")
-            })
+               
+            }
+            
         }
-        .padding().onAppear{
+       .onAppear{
             DispatchQueue.global(qos:.background).async {
                 while true{
                     
                     DispatchQueue.main.async {
-                        viewData.customers = viewData.customers.filter{$0.state != .Atendido}
+                        
+                        
+                       
+                        viewData.customers = viewData.customers.filter{$0.state != .Attended}
+                        
+                        
                     }
                     
                 }
