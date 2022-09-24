@@ -6,7 +6,12 @@ Inspirado no clássico de sincronização com semáforos:
 
 #### Sleeping Barber com m customers and n barbers 
 
-A barbershop consists of a waiting room with n chairs and the barbers room containing m barbers chairs. If there are no customers to be served, the barber goes to sleep. If a customer enters the barbershop and all chairs are occupied, then the customer leaves the shop. If the barber is busy but chairs are available, then the customer sits in one of the free chairs. If the barber is asleep, the customer wakes up the barber.
+Imagine a hypothetical barbershop with m barber chair and a waiting room with n chairs (n may be 0) for waiting customers. The following rules apply:
+
+- If there are no customers, the barber falls asleep in the chair
+- A customer must wake the barber if he is asleep
+- If a customer arrives while all barbers is working, the costumers waits til one is avaible
+- When the barber finishes a haircut, he inspects the waiting room to see if there are any waiting customers and falls asleep if there are none
 
 
 ### Pseudocódigo
@@ -78,3 +83,21 @@ class Customer{
 ````
 
 ### Particularidades de Swift
+
+#### DispatchQueue.global
+
+```Swift
+
+DispatchQueue.global(qos:).async{
+
+}
+
+```
+
+- UserInteractive： System will give more resources for this setting, it should be used for the task which relates to UI, animation, etc.
+- UserInitialed： This setting is for some time you want to prevent the user from actively using your app.
+- Default： Have lower priority than UserInteractive and UserInitialed. if you have not set any QoS, then QoS will be this case.
+- Utility： For some task that doesn’t need user to track.
+- Background： When you need to maintain or clean up the task you create.
+
+
