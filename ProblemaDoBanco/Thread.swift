@@ -35,7 +35,7 @@ class ViewData: ObservableObject{
 
 class ATMThread: Thread{
     func atualizarView() {
-        DispatchQueue.main.sync {
+        DispatchQueue.main.async {
             self.viewData.atms = atmMachines.elements.map{$0.model}
             //self.viewData.customers = waitingQueues.elements.map{$0.model}
         }
@@ -98,7 +98,7 @@ class CustomerThread:Thread{
     
     func atualizarView() {
         
-        DispatchQueue.main.sync {
+        DispatchQueue.main.async {
             //self.viewData.atms = atmMachines.elements.map{$0.model}
             
             
