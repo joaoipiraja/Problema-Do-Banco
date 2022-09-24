@@ -88,7 +88,7 @@ class Customer{
 ````
 ## Solution
 
-[VIDEO] 
+[VIDEO CODE](https://www.youtube.com/shorts/Q8A--9K-Ot0)
 
 
 ### IOS particularities
