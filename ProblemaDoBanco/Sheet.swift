@@ -9,9 +9,9 @@ import SwiftUI
 
 struct Sheet: View {
 
-    @State var model: CustomerModel = CustomerModel(tempoAtendimento: 0)
+    @State var model: Customer.Model = .init(tempoAtendimento: 0)
     @State var tempo: String = ""
-    var completion: ((CustomerModel?) -> ())
+    var completion: ((Customer.Model?) -> ())
     
     var body: some View {
         List{
@@ -50,7 +50,7 @@ struct Sheet: View {
 
 struct Sheet_Previews: PreviewProvider {
     static var previews: some View {
-        Sheet(model: CustomerModel.DATAFORMOCK){ i in
+        Sheet(model: Customer.Model.DATAFORMOCK){ i in
             print(i)
         }
     }
