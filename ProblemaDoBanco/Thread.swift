@@ -14,8 +14,8 @@ let customerSempahore = DispatchSemaphore(value: 0)
 let atmSemaphore = DispatchSemaphore(value: 0)
 let mutex = DispatchSemaphore(value: 1)
 
-var waitingQueues = Queue<CustomerThread>()
-var atmMachines = Queue<ATMThread>()
+var waitingQueues = Queue<Customer>()
+var atmMachines = Queue<ATM>()
 
 
 
@@ -27,13 +27,42 @@ protocol Thread{
 
 
 class ViewData: ObservableObject{
-    @Published var atms: Array<ATMModel> = []
-    @Published var customers: Array<CustomerModel> = []
+    @Published var atms: Array<ATM.Model> = []
+    @Published var customers: Array<Customer.Model> = []
 }
 
 
 
-class ATMThread: Thread{
+class ATM: Thread{
+    
+    
+    func run() {
+        DispatchQueue.global(qos: .background).async {
+                        
+            while(true){
+                customerSempahore.wait()
+                mutex.wait()
+                
+                let client = waitingQueues.dequeue()
+                
+                self.model.clienteAtual = client?.model
+                atmSemaphore.signal()
+                mutex.signal()
+                
+                self.model.state = .Attending
+                self.atualizarView()
+                
+                client?.cutting.wait()
+                self.model.state = .Sleeping
+                self.atualizarView()
+            }
+        }
+        
+    }
+    
+    
+    
+   
     func atualizarView() {
         DispatchQueue.main.async {
             self.viewData.atms = atmMachines.elements.map{$0.model}
@@ -42,49 +71,32 @@ class ATMThread: Thread{
     }
     
     
-    var model: ATMModel
+    var model: ATM.Model
     @ObservedObject var viewData:ViewData
     
     
-    init(model: ATMModel, viewData: ObservedObject<ViewData>){
+    init(model: ATM.Model, viewData: ObservedObject<ViewData>){
         self.model = model
         self._viewData = viewData
         atmMachines.enqueue(self)
     }
     
-    func run() {
-        while(true){
-            customerSempahore.wait()
-            mutex.wait()
-            
-            let client = waitingQueues.dequeue()
-            
-            model.clienteAtual = client?.model
-            atmSemaphore.signal()
-            mutex.signal()
-            
-            model.state = .Attending
-            atualizarView()
-            
-            client?.cutting.wait()
-            model.state = .Sleeping
-            atualizarView()
-        }
-    }
+    
     
 
 }
 
 
-class CustomerThread:Thread{
-    
+class Customer:Thread{
     
     
     var cutting = DispatchSemaphore(value: 0)
-    var model: CustomerModel
+    var model: Customer.Model
+    
+    
     @ObservedObject var viewData: ViewData
     
-    init(model: CustomerModel, viewData: ObservedObject<ViewData>){
+    init(model: Customer.Model, viewData: ObservedObject<ViewData>){
         self.cutting = DispatchSemaphore(value: 0)
         self.model = model
         self._viewData = viewData

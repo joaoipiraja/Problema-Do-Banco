@@ -41,13 +41,13 @@ struct ContentView: View {
                     Button {
                         
                         
-                        let model = ATMModel()
+                        let model = ATM.Model()
                         
                         DispatchQueue.main.async {
                             viewData.atms.append(model)
                         }
                         runThread(0.5) {
-                            ATMThread(model: model, viewData: _viewData).run()
+                            ATM(model: model, viewData: _viewData)
                         }
                         
                           
@@ -96,7 +96,7 @@ struct ContentView: View {
                             viewData.customers.append(model)
                         }
                         runThread(0.5) {
-                            CustomerThread(model: model, viewData: _viewData).run()
+                            Customer(model: model, viewData: _viewData).run()
                         }
                        
                     }

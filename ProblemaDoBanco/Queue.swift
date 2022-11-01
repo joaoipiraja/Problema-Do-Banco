@@ -1,5 +1,6 @@
 
-struct Queue<T> {
+struct Queue<T: AnyObject> {
+    
   var elements: [T] = []
 
   mutating func enqueue(_ value: T) {
